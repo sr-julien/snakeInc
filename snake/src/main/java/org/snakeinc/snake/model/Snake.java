@@ -1,77 +1,82 @@
 package org.snakeinc.snake.model;
 
-import java.util.ArrayList;
-import org.snakeinc.snake.GameParams;
-import org.snakeinc.snake.exception.OutOfPlayException;
-import org.snakeinc.snake.exception.SelfCollisionException;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
+import org.snakeinc.snake.model.grid.Direction;
+import org.snakeinc.snake.model.grid.Position;
 
-public class Snake {
+public final class Snake {
 
-    private final ArrayList<Cell> body;
-    private final AppleEatenListener onAppleEatenListener;
-    private final Grid grid;
+    private final Deque<Position> body = new ArrayDeque<>();
+    private Direction direction;
+    private int pendingGrowth = 0;
 
-    public Snake(AppleEatenListener listener, Grid grid) {
-        this.body = new ArrayList<>();
-        this.onAppleEatenListener = listener;
-        this.grid = grid;
-        Cell head = grid.getTile(GameParams.SNAKE_DEFAULT_X, GameParams.SNAKE_DEFAULT_Y);
-        head.addSnake(this);
-        body.add(head);
+    public Snake(Position head, Direction direction) {
+        this.body.addFirst(head);
+        this.direction = direction;
     }
 
-    public int getSize() {
-        return body.size();
-    }
-
-    public Cell getHead() {
+    public Position head() {
         return body.getFirst();
     }
 
-    public void eat(Apple apple, Cell cell) {
-        body.addFirst(cell);
-        cell.addSnake(this);
-        onAppleEatenListener.onAppleEaten(apple, cell);
+    public Position tail() {
+        return body.getLast();
     }
 
-    public void move(char direction) throws OutOfPlayException, SelfCollisionException {
-        int x = getHead().getX();
-        int y = getHead().getY();
-        switch (direction) {
-            case 'U':
-                y--;
-                break;
-            case 'D':
-                y++;
-                break;
-            case 'L':
-                x--;
-                break;
-            case 'R':
-                x++;
-                break;
-        }
-        Cell newHead = grid.getTile(x, y);
-        if (newHead == null) {
-            throw new OutOfPlayException();
-        }
-        if (newHead.containsASnake()) {
-            throw new SelfCollisionException();
-        }
-
-        // Eat apple :
-        if (newHead.containsAnApple()) {
-            this.eat(newHead.getApple(), newHead);
-            return;
-        }
-
-        // The snake did not eat :
-        newHead.addSnake(this);
-        body.addFirst(newHead);
-
-        body.getLast().removeSnake();
-        body.removeLast();
-
+    /** Head first. */
+    public List<Position> body() {
+        return List.copyOf(body);
     }
 
+    public int size() {
+        return body.size();
+    }
+
+    public Direction direction() {
+        return direction;
+    }
+
+    /** Ignored (returns false) if it would reverse the snake. */
+    public boolean turn(Direction newDirection) {
+        if (newDirection == direction.opposite()) {
+            return false;
+        }
+        direction = newDirection;
+        return true;
+    }
+
+    public Position nextHead() {
+        return head().next(direction);
+    }
+
+    /** One segment is added per move. */
+    public void grow(int segments) {
+        if (segments < 0) {
+            throw new IllegalArgumentException("segments must be >= 0");
+        }
+        pendingGrowth += segments;
+    }
+
+    public boolean occupies(Position position) {
+        return body.contains(position);
+    }
+
+    /** The tail does not count when not growing: it leaves its tile during the move. */
+    public boolean wouldCollideWith(Position position) {
+        if (pendingGrowth == 0 && position.equals(tail())) {
+            return false;
+        }
+        return occupies(position);
+    }
+
+    public void move() {
+        body.addFirst(nextHead());
+        if (pendingGrowth > 0) {
+            pendingGrowth--;
+        } else {
+            body.removeLast();
+        }
+    }
 }
