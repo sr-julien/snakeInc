@@ -10,6 +10,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import org.snakeinc.snake.model.AppleStatistics;
 import org.snakeinc.snake.model.Game;
 import org.snakeinc.snake.model.GameConfig;
 import org.snakeinc.snake.model.GameListener;
@@ -23,9 +24,11 @@ public final class GamePanel extends JPanel {
     private final Game game;
     private final GameRenderer renderer = new GameRenderer(TILE_PIXEL_SIZE);
     private final Timer timer;
+    private final AppleStatistics statistics;
 
     public GamePanel(GameConfig config) {
         this.game = new Game(config);
+        this.statistics = new AppleStatistics(game.board());
         this.setPreferredSize(new Dimension(config.width() * TILE_PIXEL_SIZE, config.height() * TILE_PIXEL_SIZE));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
@@ -36,10 +39,12 @@ public final class GamePanel extends JPanel {
             }
         });
         this.timer = new Timer(config.tickMillis(), e -> onTick());
+        game.addListener(statistics);
         game.addListener(new GameListener() {
             @Override
             public void onGameOver(GameState finalState) {
                 timer.stop();
+                statistics.print();
             }
         });
         timer.start();
