@@ -6,7 +6,7 @@ import org.snakeinc.snake.model.grid.Position;
 /**
  * An element on the board (apple, wall...). Implement it to add new elements to the game.
  */
-public interface BoardEntity {
+public sealed interface BoardEntity permits RedApple, GoldenApple, Wall {
 
     Position position();
 

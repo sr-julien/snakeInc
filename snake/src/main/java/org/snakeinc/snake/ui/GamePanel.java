@@ -15,6 +15,7 @@ import org.snakeinc.snake.model.GameConfig;
 import org.snakeinc.snake.model.GameListener;
 import org.snakeinc.snake.model.GameState;
 import org.snakeinc.snake.model.grid.Direction;
+import org.snakeinc.snake.model.listener.ContactCounter;
 
 public final class GamePanel extends JPanel {
 
@@ -43,6 +44,7 @@ public final class GamePanel extends JPanel {
             }
         });
         timer.start();
+        game.addListener(new ContactCounter());
     }
 
     private void onTick() {
