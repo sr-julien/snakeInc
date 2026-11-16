@@ -32,6 +32,7 @@ public interface GameContext {
     /** Tiles holding neither the snake nor an entity. */
     List<Position> freeTiles();
 
+
     /** Empty if the grid is full. */
     default Optional<Position> randomFreeTile() {
         List<Position> free = freeTiles();
