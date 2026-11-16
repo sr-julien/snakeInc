@@ -8,7 +8,7 @@ import org.snakeinc.snake.model.entity.GoldenApple;
  */
 public final class GoldenApples implements Spawner {
 
-    private static final int SCORE_STEP = 10;
+    private static final int SCORE_STEP = 3;
 
     private int thresholdsSpawned = 0;
 
