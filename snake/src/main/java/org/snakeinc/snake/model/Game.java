@@ -43,7 +43,7 @@ public final class Game {
     }
 
     public Game(GameConfig config) {
-        this(config, new Random(), List.of(new KeepApples(1), new GoldenApples()));
+        this(config, new Random(), List.of(new KeepApples(100), new GoldenApples()));
     }
 
     public Game(GameConfig config, RandomGenerator random, List<Spawner> spawners) {
