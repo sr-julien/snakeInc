@@ -21,6 +21,6 @@ public record GameConfig(int width, int height, Position snakeStart, Direction i
     }
 
     public static GameConfig defaults() {
-        return new GameConfig(30, 30, new Position(5, 5), Direction.RIGHT, 100);
+        return new GameConfig(30, 30, new Position(5, 5), Direction.RIGHT, 200);
     }
 }

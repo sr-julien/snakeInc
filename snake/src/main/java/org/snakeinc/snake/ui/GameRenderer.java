@@ -11,8 +11,8 @@ import org.snakeinc.snake.model.grid.Position;
 
 public final class GameRenderer {
 
-    private static final Color SNAKE_COLOR = Color.GREEN;
-    private static final Color SNAKE_BORDER_COLOR = Color.GREEN.darker();
+    private static final Color SNAKE_COLOR = Color.BLUE;
+    private static final Color SNAKE_BORDER_COLOR = Color.BLUE.darker();
 
     private final int tileSize;
 

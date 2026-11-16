@@ -18,7 +18,7 @@ import org.snakeinc.snake.model.grid.Direction;
 
 public final class GamePanel extends JPanel {
 
-    public static final int TILE_PIXEL_SIZE = 20;
+    public static final int TILE_PIXEL_SIZE = 30;
 
     private final Game game;
     private final GameRenderer renderer = new GameRenderer(TILE_PIXEL_SIZE);
