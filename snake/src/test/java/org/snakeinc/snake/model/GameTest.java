@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Random;
 import org.junit.jupiter.api.Test;
 import org.snakeinc.snake.model.entity.BoardEntity;
+import org.snakeinc.snake.model.entity.GhostApple;
 import org.snakeinc.snake.model.entity.RedApple;
+import org.snakeinc.snake.model.entity.StarApple;
 import org.snakeinc.snake.model.entity.Wall;
 import org.snakeinc.snake.model.grid.Direction;
 import org.snakeinc.snake.model.grid.Position;
@@ -110,6 +112,58 @@ class GameTest {
     }
 
     @Test
+    void star_apple_allows_crossing_the_body_for_twenty_ticks() {
+        Game game = emptyGame(new Position(5, 5), Direction.RIGHT);
+        game.snake().grow(4);
+        game.board().add(new StarApple(new Position(6, 5)));
+
+        game.tick();
+        assertTrue(game.snake().canCrossBody());
+
+        for (int i = 0; i < 18; i++) {
+            game.snake().updateState();
+        }
+        assertTrue(game.snake().canCrossBody());
+
+        game.snake().updateState();
+        assertTrue(!game.snake().canCrossBody());
+    }
+
+    @Test
+    void ghost_apple_allows_crossing_walls_and_expires() {
+        Game game = new Game(new GameConfig(3, 1, new Position(0, 0), Direction.RIGHT, 100),
+                new Random(0), List.of());
+        game.board().add(new GhostApple(new Position(1, 0)));
+        game.board().add(new Wall(new Position(0, 0)));
+
+        game.tick();
+        assertTrue(game.snake().canCrossWalls());
+        game.tick();
+        assertEquals(new Position(2, 0), game.snake().head());
+        game.tick();
+        assertEquals(new Position(0, 0), game.snake().head());
+
+        for (int i = 0; i < 17; i++) {
+            game.snake().updateState();
+        }
+        game.snake().updateState();
+        assertTrue(!game.snake().canCrossWalls());
+    }
+
+    @Test
+    void power_ups_can_be_combined() {
+        Game game = emptyGame(new Position(5, 5), Direction.RIGHT);
+
+        game.board().add(new StarApple(new Position(6, 5)));
+        game.tick();
+        game.board().add(new GhostApple(new Position(7, 5)));
+        game.tick();
+
+        assertTrue(game.snake().canCrossBody());
+        assertTrue(game.snake().canCrossWalls());
+    }
+
+    @Test
     void the_head_can_follow_the_tail() {
         Game game = emptyGame(new Position(5, 5), Direction.RIGHT);
         game.snake().grow(3);
@@ -173,6 +227,14 @@ class GameTest {
         game.tick();
 
         assertEquals(100, game.board().count(RedApple.class));
+    }
+
+    @Test
+    void default_game_spawns_both_power_ups() {
+        Game game = new Game(GameConfig.defaults());
+
+        assertEquals(1, game.board().count(StarApple.class));
+        assertEquals(1, game.board().count(GhostApple.class));
     }
 
     @Test

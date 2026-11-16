@@ -15,6 +15,7 @@ import org.snakeinc.snake.model.grid.Grid;
 import org.snakeinc.snake.model.grid.Position;
 import org.snakeinc.snake.model.spawner.GoldenApples;
 import org.snakeinc.snake.model.spawner.KeepApples;
+import org.snakeinc.snake.model.spawner.PowerUps;
 import org.snakeinc.snake.model.spawner.Spawner;
 import org.snakeinc.snake.model.spawner.Walls;
 
@@ -44,7 +45,7 @@ public final class Game {
     }
 
     public Game(GameConfig config) {
-        this(config, new Random(), List.of(new KeepApples(100), new GoldenApples(), new Walls()));
+        this(config, new Random(), List.of(new KeepApples(100), new GoldenApples(), new Walls(), new PowerUps()));
     }
 
     public Game(GameConfig config, RandomGenerator random, List<Spawner> spawners) {
@@ -108,13 +109,17 @@ public final class Game {
             snake.turn(pendingTurns.removeFirst());
         }
 
-        Position next = snake.nextHead();
-        if (!grid.contains(next) || snake.wouldCollideWith(next)) {
+        Position next = snake.nextHead(grid);
+        if ((!grid.contains(next) && !snake.canCrossWalls())
+                || (!snake.canCrossBody() && snake.wouldCollideWith(next))) {
             end(GameState.LOST);
             return;
         }
 
         board.entityAt(next).ifPresent(entity -> {
+            if (snake.canCrossWalls() && entity instanceof org.snakeinc.snake.model.entity.Wall) {
+                return;
+            }
             entity.onHeadEnter(context);
             listeners.forEach(listener -> listener.onEntityReached(entity));
         });
@@ -122,7 +127,8 @@ public final class Game {
             return;
         }
 
-        snake.move();
+        snake.moveTo(next);
+        snake.updateState();
         if (snake.size() >= grid.tileCount()) {
             end(GameState.WON);
             return;
@@ -196,6 +202,16 @@ public final class Game {
         @Override
         public void win() {
             end(GameState.WON);
+        }
+
+        @Override
+        public void makeSnakeInvincible(int ticks) {
+            snake.becomeInvincible(ticks);
+        }
+
+        @Override
+        public void makeSnakeGhost(int ticks) {
+            snake.becomeGhost(ticks);
         }
 
         @Override

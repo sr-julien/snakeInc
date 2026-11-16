@@ -29,6 +29,10 @@ public interface GameContext {
 
     void win();
 
+    void makeSnakeInvincible(int ticks);
+
+    void makeSnakeGhost(int ticks);
+
     /** Tiles holding neither the snake nor an entity. */
     List<Position> freeTiles();
 

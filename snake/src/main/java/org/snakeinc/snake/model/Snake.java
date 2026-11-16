@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import org.snakeinc.snake.model.grid.Direction;
+import org.snakeinc.snake.model.grid.Grid;
 import org.snakeinc.snake.model.grid.Position;
 
 public final class Snake {
@@ -11,6 +12,7 @@ public final class Snake {
     private final Deque<Position> body = new ArrayDeque<>();
     private Direction direction;
     private int pendingGrowth = 0;
+    private SnakeState state = new NormalSnakeState();
 
     public Snake(Position head, Direction direction) {
         this.body.addFirst(head);
@@ -51,6 +53,38 @@ public final class Snake {
         return head().next(direction);
     }
 
+    public Position nextHead(Grid grid) {
+        Position next = nextHead();
+        if (!state.canCrossWalls()) {
+            return next;
+        }
+        return new Position(
+                Math.floorMod(next.x(), grid.width()),
+                Math.floorMod(next.y(), grid.height()));
+    }
+
+    public boolean canCrossBody() {
+        return state.canCrossBody();
+    }
+
+    public boolean canCrossWalls() {
+        return state.canCrossWalls();
+    }
+
+    public void becomeInvincible(int ticks) {
+        validateDuration(ticks);
+        state = state.withInvincibility(ticks);
+    }
+
+    public void becomeGhost(int ticks) {
+        validateDuration(ticks);
+        state = state.withGhost(ticks);
+    }
+
+    public void updateState() {
+        state = state.afterTick();
+    }
+
     /** One segment is added per move. */
     public void grow(int segments) {
         if (segments < 0) {
@@ -77,6 +111,21 @@ public final class Snake {
             pendingGrowth--;
         } else {
             body.removeLast();
+        }
+    }
+
+    public void moveTo(Position position) {
+        body.addFirst(position);
+        if (pendingGrowth > 0) {
+            pendingGrowth--;
+        } else {
+            body.removeLast();
+        }
+    }
+
+    private static void validateDuration(int ticks) {
+        if (ticks <= 0) {
+            throw new IllegalArgumentException("ticks must be > 0");
         }
     }
 }
