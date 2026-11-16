@@ -16,6 +16,7 @@ import org.snakeinc.snake.model.grid.Position;
 import org.snakeinc.snake.model.spawner.GoldenApples;
 import org.snakeinc.snake.model.spawner.KeepApples;
 import org.snakeinc.snake.model.spawner.Spawner;
+import org.snakeinc.snake.model.spawner.Walls;
 
 /**
  * Game rules. To extend the game, use {@link BoardEntity}, {@link Spawner} and {@link GameListener}
@@ -43,7 +44,7 @@ public final class Game {
     }
 
     public Game(GameConfig config) {
-        this(config, new Random(), List.of(new KeepApples(100), new GoldenApples()));
+        this(config, new Random(), List.of(new KeepApples(100), new GoldenApples(), new Walls()));
     }
 
     public Game(GameConfig config, RandomGenerator random, List<Spawner> spawners) {

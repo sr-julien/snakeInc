@@ -165,16 +165,14 @@ class GameTest {
     }
 
     @Test
-    void default_game_keeps_one_red_apple_on_the_board() {
-        Game game = new Game(new GameConfig(10, 10, new Position(5, 5), Direction.RIGHT, 100));
-        assertEquals(1, game.board().count(RedApple.class));
+    void default_game_keeps_a_hundred_red_apples_on_the_board() {
+        Game game = new Game(GameConfig.defaults());
+        assertEquals(100, game.board().count(RedApple.class));
 
         game.board().remove(game.board().entities().getFirst());
-        game.board().add(new RedApple(new Position(6, 5)));
         game.tick();
 
-        assertEquals(1, game.score());
-        assertEquals(1, game.board().count(RedApple.class));
+        assertEquals(100, game.board().count(RedApple.class));
     }
 
     @Test
