@@ -15,6 +15,7 @@ import org.snakeinc.snake.model.grid.Grid;
 import org.snakeinc.snake.model.grid.Position;
 import org.snakeinc.snake.model.spawner.KeepApples;
 import org.snakeinc.snake.model.spawner.KeepGoldenApples;
+import org.snakeinc.snake.model.spawner.WallSpawner;
 import org.snakeinc.snake.model.spawner.Spawner;
 
 /**
@@ -43,7 +44,7 @@ public final class Game {
     }
 
     public Game(GameConfig config) {
-        this(config, new Random(), List.of(new KeepApples(10), new KeepGoldenApples(10)));
+        this(config, new Random(), List.of(new KeepApples(10), new KeepGoldenApples(10), new WallSpawner(10)));
     }
 
     public Game(GameConfig config, RandomGenerator random, List<Spawner> spawners) {
