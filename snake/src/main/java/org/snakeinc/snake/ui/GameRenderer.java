@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import org.snakeinc.snake.model.Game;
 import org.snakeinc.snake.model.entity.BoardEntity;
+import org.snakeinc.snake.model.entity.GoldenApple;
 import org.snakeinc.snake.model.entity.RedApple;
 import org.snakeinc.snake.model.entity.Wall;
 import org.snakeinc.snake.model.grid.Position;
@@ -40,6 +41,10 @@ public final class GameRenderer {
         switch (entity) {
             case RedApple ignored -> {
                 g.setColor(Color.RED);
+                g.fillOval(x, y, tileSize, tileSize);
+            }
+            case GoldenApple ignored -> {
+                g.setColor(new Color(255, 215, 0));
                 g.fillOval(x, y, tileSize, tileSize);
             }
             case Wall ignored -> {
