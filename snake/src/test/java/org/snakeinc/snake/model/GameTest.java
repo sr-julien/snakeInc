@@ -169,7 +169,7 @@ class GameTest {
         Game game = new Game(new GameConfig(10, 10, new Position(5, 5), Direction.RIGHT, 100));
         assertEquals(1, game.board().count(RedApple.class));
 
-        game.board().remove(game.board().entities().getFirst());
+        game.board().remove(game.board().entities().stream().filter(RedApple.class::isInstance).findFirst().orElseThrow());
         game.board().add(new RedApple(new Position(6, 5)));
         game.tick();
 

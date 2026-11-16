@@ -15,6 +15,7 @@ import org.snakeinc.snake.model.GameConfig;
 import org.snakeinc.snake.model.GameListener;
 import org.snakeinc.snake.model.GameState;
 import org.snakeinc.snake.model.grid.Direction;
+import org.snakeinc.snake.model.statistics.AppleStatistics;
 
 public final class GamePanel extends JPanel {
 
@@ -42,6 +43,7 @@ public final class GamePanel extends JPanel {
                 timer.stop();
             }
         });
+        game.addListener(new AppleStatistics(System.out));
         timer.start();
     }
 
