@@ -13,7 +13,9 @@ import org.snakeinc.snake.model.entity.BoardEntity;
 import org.snakeinc.snake.model.grid.Direction;
 import org.snakeinc.snake.model.grid.Grid;
 import org.snakeinc.snake.model.grid.Position;
+import org.snakeinc.snake.model.spawner.GoldenAppleMilestones;
 import org.snakeinc.snake.model.spawner.KeepApples;
+import org.snakeinc.snake.model.spawner.PlaceWalls;
 import org.snakeinc.snake.model.spawner.Spawner;
 
 /**
@@ -42,7 +44,7 @@ public final class Game {
     }
 
     public Game(GameConfig config) {
-        this(config, new Random(), List.of(new KeepApples(100)));
+        this(config, new Random(), List.of(new PlaceWalls(10), new KeepApples(100), new GoldenAppleMilestones()));
     }
 
     public Game(GameConfig config, RandomGenerator random, List<Spawner> spawners) {

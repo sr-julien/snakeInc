@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import org.junit.jupiter.api.Test;
 import org.snakeinc.snake.model.entity.BoardEntity;
+import org.snakeinc.snake.model.entity.GoldenApple;
 import org.snakeinc.snake.model.entity.RedApple;
 import org.snakeinc.snake.model.entity.Wall;
 import org.snakeinc.snake.model.grid.Direction;
@@ -40,6 +41,21 @@ class GameTest {
 
         assertEquals(2, game.snake().size());
         assertEquals(1, game.score());
+        assertTrue(game.board().isEmpty());
+    }
+
+    @Test
+    void eating_a_golden_apple_grows_the_snake_by_three_and_adds_five_points() {
+        Game game = emptyGame(new Position(5, 5), Direction.UP);
+        game.board().add(new GoldenApple(new Position(5, 4)));
+
+        game.tick();
+
+        assertEquals(2, game.snake().size());
+        game.tick();
+        game.tick();
+        assertEquals(4, game.snake().size());
+        assertEquals(5, game.score());
         assertTrue(game.board().isEmpty());
     }
 

@@ -8,21 +8,29 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.snakeinc.snake.model.Game;
 import org.snakeinc.snake.model.GameConfig;
 import org.snakeinc.snake.model.GameListener;
 import org.snakeinc.snake.model.GameState;
+import org.snakeinc.snake.model.entity.BoardEntity;
+import org.snakeinc.snake.model.entity.GoldenApple;
+import org.snakeinc.snake.model.entity.RedApple;
 import org.snakeinc.snake.model.grid.Direction;
 
 public final class GamePanel extends JPanel {
 
     public static final int TILE_PIXEL_SIZE = 30;
 
+    private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName());
+
     private final Game game;
     private final GameRenderer renderer = new GameRenderer(TILE_PIXEL_SIZE);
     private final Timer timer;
+    private int redApplesEaten;
+    private int goldenApplesEaten;
 
     public GamePanel(GameConfig config) {
         this.game = new Game(config);
@@ -38,8 +46,19 @@ public final class GamePanel extends JPanel {
         this.timer = new Timer(config.tickMillis(), e -> onTick());
         game.addListener(new GameListener() {
             @Override
+            public void onEntityReached(BoardEntity entity) {
+                switch (entity) {
+                    case RedApple ignored -> redApplesEaten++;
+                    case GoldenApple ignored -> goldenApplesEaten++;
+                    default -> {
+                    }
+                }
+            }
+
+            @Override
             public void onGameOver(GameState finalState) {
                 timer.stop();
+                LOGGER.info(() -> "Apples eaten - Red: " + redApplesEaten + ", Golden: " + goldenApplesEaten);
             }
         });
         timer.start();
